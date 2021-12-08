@@ -24,6 +24,8 @@
   (.isPluginAvailable Capacitor name))
 
 (defonce folder-picker (registerPlugin "FolderPicker"))
+(when (native-android?)
+  (defonce file-sync (registerPlugin "GraphFileSync")))
 (when (native-ios?)
  (defonce download-icloud-files (registerPlugin "DownloadiCloudFiles")))
 (when (native-ios?)
