@@ -28,6 +28,7 @@
             [frontend.storage :as storage]
             [frontend.util :as util]
             [frontend.util.pool :as pool]
+            [frontend.util.persist-var :as persist-var]
             [cljs.reader :refer [read-string]]
             [goog.object :as gobj]
             [lambdaisland.glogi :as log]
@@ -244,6 +245,7 @@
       (enable-datalog-console))
     (when (util/electron?)
       (el/listen!))
+    (persist-var/load-vars)
     (js/setTimeout instrument! (* 60 1000))))
 
 (defn stop! []
