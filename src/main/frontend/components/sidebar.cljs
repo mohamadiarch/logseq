@@ -20,6 +20,7 @@
             [frontend.handler.editor :as editor-handler]
             [frontend.handler.route :as route-handler]
             [frontend.handler.page :as page-handler]
+            [frontend.handler.user :as user-handler]
             [frontend.mixins :as mixins]
             [frontend.modules.shortcut.data-helper :as shortcut-dh]
             [frontend.state :as state]
@@ -301,7 +302,7 @@
                               (let [format (:block/format (state/get-edit-block))]
                                 (editor-handler/upload-asset id files format editor-handler/*asset-uploading? true))))}))
                 state)}
-  [{:keys [route-match global-graph-pages? logged? home? route-name indexeddb-support? white? db-restoring? main-content]}]
+  [{:keys [route-match global-graph-pages? home? route-name indexeddb-support? white? db-restoring? main-content]}]
 
   (let [left-sidebar-open? (state/sub :ui/left-sidebar-open?)]
     (rum/with-context [[t] i18n/*tongue-context*]
@@ -369,11 +370,11 @@
         importing-to-db? (state/sub :repo/importing-to-db?)
         current-repo (state/sub :git/current-repo)
         loading-files? (when current-repo (state/sub [:repo/loading-files? current-repo]))
-        me (state/sub :me)
         journals-length (state/sub :journals-length)
         latest-journals (db/get-latest-journals (state/get-current-repo) journals-length)
         preferred-format (state/sub [:me :preferred_format])
-        logged? (:name me)]
+        logged? (user-handler/logged?)
+        me (state/sub :me)]
     (rum/with-context [[t] i18n/*tongue-context*]
       [:div
        (cond
@@ -394,15 +395,15 @@
          loading-files?
          (ui/loading (t :loading-files))
 
-         (and (not logged?) (seq latest-journals))
-         (journal/journals latest-journals)
+         ;; (and (not logged?) (seq latest-journals))
+         ;; (journal/journals latest-journals)
 
-         (and logged? (not preferred-format))
-         (widgets/choose-preferred-format)
+         ;; (and logged? (not preferred-format))
+         ;; (widgets/choose-preferred-format)
 
                          ;; TODO: delay this
-         (and logged? (nil? (:email me)))
-         (settings/set-email)
+         ;; (and logged? (nil? (:email me)))
+         ;; (settings/set-email)
 
          cloning?
          (ui/loading (t :cloning))
@@ -494,7 +495,6 @@
         right-sidebar-blocks (state/sub-right-sidebar-blocks)
         route-name (get-in route-match [:data :name])
         global-graph-pages? (= :graph route-name)
-        logged? (:name me)
         db-restoring? (state/sub :db/restoring?)
         indexeddb-support? (state/sub :indexeddb/support?)
         page? (= :page route-name)
@@ -528,16 +528,13 @@
           (header/header {:open-fn        open-fn
                           :white?         white?
                           :current-repo   current-repo
-                          :logged?        logged?
                           :page?          page?
                           :route-match    route-match
-                          :me             me
                           :default-home   default-home
                           :new-block-mode new-block-mode})
 
           (main {:route-match         route-match
                  :global-graph-pages? global-graph-pages?
-                 :logged?             logged?
                  :home?               home?
                  :route-name          route-name
                  :indexeddb-support?  indexeddb-support?
