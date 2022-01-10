@@ -39,6 +39,8 @@
       :on-click route-handler/go-to-journals!}
      (ui/icon "home" {:style {:fontSize ui/icon-size}})]))
 
+(def hiding-login&file-sync true)
+
 (rum/defc login < rum/reactive
   []
   (let [_ (state/sub :auth/id-token)])
@@ -235,8 +237,10 @@
              (ui/icon "search" {:style {:fontSize ui/icon-size}})]))]
 
        [:div.r.flex
-        (file-sync)
-        (login)
+        (when-not hiding-login&file-sync
+          (file-sync))
+        (when-not hiding-login&file-sync
+          (login))
         (when plugin-handler/lsp-enabled?
           (plugins/hook-ui-items :toolbar))
 
