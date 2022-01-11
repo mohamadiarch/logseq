@@ -552,7 +552,7 @@
   (let [{:keys [id format block]} (get-state)
         input-id id
         input (gdom/getElement input-id)
-        repo (:block/repo block)]
+        repo (state/get-current-repo)]
     (set-up-key-down! repo state format)
     (set-up-key-up! state input input-id search-timeout)))
 

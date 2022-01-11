@@ -210,7 +210,7 @@
                   (if fmt-journal? (date/journal-title->custom-format title) title))
           old-name (or title page-name)
           confirm-fn (fn []
-                       (let [merge? (and (not= (util/page-name-sanity-lc page-name) 
+                       (let [merge? (and (not= (util/page-name-sanity-lc page-name)
                                                (util/page-name-sanity-lc @*title-value))
                                          (page-handler/page-exists? page-name)
                                          (page-handler/page-exists? @*title-value))]
