@@ -2905,9 +2905,9 @@
 
 (defn- get-segment
   [config flat-blocks idx blocks->vec-tree]
-  (let [new-idx (if-not (zero? idx)
-                  (+ idx step-loading-blocks)
-                  initial-blocks-length)
+  (let [new-idx (if (< idx initial-blocks-length)
+                  initial-blocks-length
+                  (+ idx step-loading-blocks))
         max-idx (count flat-blocks)
         idx (min max-idx new-idx)
         blocks (util/safe-subvec flat-blocks 0 idx)]
@@ -2915,6 +2915,15 @@
      idx]))
 
 (rum/defcs lazy-blocks <
+  {:did-remount (fn [old-state new-state]
+                  ;; Loading more when pressing Enter or paste
+                  (let [args (:rum/args new-state)
+                        *last-idx (::last-idx new-state)
+                        new-idx (if (zero? *last-idx)
+                                  1
+                                  (inc @*last-idx))]
+                    (reset! *last-idx new-idx))
+                  new-state)}
   (rum/local 0 ::last-idx)
   [state config flat-blocks blocks->vec-tree]
   (let [*last-idx (::last-idx state)
